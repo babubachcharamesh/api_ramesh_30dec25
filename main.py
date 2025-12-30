@@ -289,14 +289,28 @@ async def reset_database():
 # ============================================
 
 def main():
-    """Run the FastAPI application"""
+    """Run the FastAPI application (production-friendly).
+
+    Reads configuration from environment variables:
+      - HOST (default: 0.0.0.0)
+      - PORT (default: 8000)
+      - UVICORN_RELOAD (default: false)
+      - LOG_LEVEL (default: info)
+    """
+    import os
     import uvicorn
+
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 8000))
+    reload = os.getenv("UVICORN_RELOAD", "false").lower() in ("1", "true", "yes")
+    log_level = os.getenv("LOG_LEVEL", "info")
+
     uvicorn.run(
         "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
+        host=host,
+        port=port,
+        reload=reload,
+        log_level=log_level
     )
 
 if __name__ == "__main__":
